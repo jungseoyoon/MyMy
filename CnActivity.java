@@ -143,7 +143,6 @@ Log.d("넘어온 시간들",hour+"랑"+min);
                 //aaa.show();
 
                  mHandler.postDelayed(new Runnable() {
-
                         @Override
                         public void run() {
                           ag.dismiss();
