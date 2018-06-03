@@ -61,7 +61,9 @@ public class AimTime extends DialogFragment {
                     //데이터 가지고 이동
                     intent.putExtra("data",data); //ㅅㅂ개빡치네 인트혀으로쳐받으니까안되지시벌!!!!
                     intent.putExtra("hours",hours);
+
                     intent.putExtra("mins",mins);
+
                     startActivity(intent);
                     //Log.d("intent",intent.pu);
                     Log.d("data",data);

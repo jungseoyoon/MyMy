@@ -32,7 +32,7 @@ public class CnActivity extends AppCompatActivity { //
     private Thread thread;
 
   final Handler mHandler = new Handler();
-float cc;
+float data_Value;
 
     int cyear=cal.get(Calendar.YEAR);
     int cmonth=(cal.get(Calendar.MONTH)+1);
@@ -137,26 +137,10 @@ float cc;
                 set = createSet();                              // createSet 실행
                 data.addDataSet(set);                           // createSet 을 실행한 set을 DataSet에 추가함
             }
-            cc= (float) Math.random();
-
+            data_Value= (float) Math.random();
+            dia(data_Value);
             data.addEntry(new Entry(set.getEntryCount(), cc), 0);   // set의 맨 마지막에 랜덤값을 Entry로 data에 추가함
-            if(0.2< cc && cc<0.6 ){
 
-                // final AlarmGraph ag=new AlarmGraph();
-                //ag.show(getSupportFragmentManager(),"집중해");
-                AlertDialog.Builder ad=new AlertDialog.Builder(CnActivity.this);
-                ad.setMessage("집중하세요!!");
-
-                final AlertDialog aaa=ad.create();
-                aaa.show();
-                mHandler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        aaa.dismiss();
-                    }
-
-                }, 1000);
-            }
 
             data.addEntry(new Entry(set.getEntryCount(), (float)Math.random() ), 0);   // set의 맨 마지막에 랜덤값을 Entry로 data에 추가함
             data.notifyDataChanged();                           // data의 값 변동을 감지함
@@ -169,6 +153,25 @@ float cc;
 
         }
 
+    }
+
+    private void dia(float data_Value) {
+        if(0.2< data_Value && data_Value<0.6 ){
+            // final AlarmGraph ag=new AlarmGraph();
+            //ag.show(getSupportFragmentManager(),"집중해");
+            AlertDialog.Builder ad=new AlertDialog.Builder(CnActivity.this);
+            ad.setMessage("집중하세요!!");
+
+            final AlertDialog aaa=ad.create();
+            aaa.show();
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    aaa.dismiss();
+                }
+
+            }, 1000);
+        }
     }
 
     private LineDataSet createSet() {
