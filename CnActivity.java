@@ -1,9 +1,11 @@
 package com.example.syjung.mymy;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.icu.util.Calendar;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
@@ -19,6 +21,7 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import android.app.AlertDialog;
+import android.widget.Toast;
 
 public class CnActivity extends AppCompatActivity { //
     private TextView theDate;
@@ -27,8 +30,9 @@ public class CnActivity extends AppCompatActivity { //
 
     private LineChart chart;
     private Thread thread;
- final android.content.Context context=this;
+
   final Handler mHandler = new Handler();
+float cc;
 
     int cyear=cal.get(Calendar.YEAR);
     int cmonth=(cal.get(Calendar.MONTH)+1);
@@ -58,7 +62,8 @@ public class CnActivity extends AppCompatActivity { //
     int hour;
     int min;
 
-@Override
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cn);
@@ -72,9 +77,11 @@ public class CnActivity extends AppCompatActivity { //
         hour =incomingIntent.getIntExtra("hours",90); //설정한 목표 시간
         min=incomingIntent.getIntExtra("mins",92); //설정한 목표시간 분
         aimTime.setText(times);
-Log.d("넘어온 시간들",hour+"랑"+min);
+        Log.d("넘어온 시간들",hour+"랑"+min);
         //변수 hour min 을 long으로 바꾸서
-
+        long hourn=hour*1000*3600;
+        long minn=min*1000*60;
+        Log.d("넘어온 시간들변환",hourn+"랑"+minn);
     /**
      * 타이머 변수
      * **/
@@ -105,7 +112,7 @@ Log.d("넘어온 시간들",hour+"랑"+min);
     xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);          // x축의 위치는 하단
     xAxis.setTextSize(10f);                                 // x축 텍스트의 크기는 10f
     xAxis.setDrawGridLines(false);                          // x축의 그리드 라인을 없앰
-
+        xAxis.setValueFormatter(new CustomValueForm());
     YAxis leftAxis = chart.getAxisLeft();
     leftAxis.setDrawGridLines(false);                       // y축의 그리드 라인을 없앰
 
@@ -130,31 +137,32 @@ Log.d("넘어온 시간들",hour+"랑"+min);
                 set = createSet();                              // createSet 실행
                 data.addDataSet(set);                           // createSet 을 실행한 set을 DataSet에 추가함
             }
-            float cc= (float) Math.random();
+            cc= (float) Math.random();
 
             data.addEntry(new Entry(set.getEntryCount(), cc), 0);   // set의 맨 마지막에 랜덤값을 Entry로 data에 추가함
-            if(0.2< cc && cc<0.6){
-                final AlarmGraph ag=new AlarmGraph();
-                ag.show(getSupportFragmentManager(),"집중해");
-               // AlertDialog.Builder ad=new AlertDialog.Builder(context);
-               // ad.setMessage("집중하세요!!");
+            if(0.2< cc && cc<0.6 ){
 
-                //final AlertDialog aaa=ad.create();
-                //aaa.show();
+                // final AlarmGraph ag=new AlarmGraph();
+                //ag.show(getSupportFragmentManager(),"집중해");
+                AlertDialog.Builder ad=new AlertDialog.Builder(CnActivity.this);
+                ad.setMessage("집중하세요!!");
 
-                 mHandler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                          ag.dismiss();
-                        }
+                final AlertDialog aaa=ad.create();
+                aaa.show();
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        aaa.dismiss();
+                    }
 
-                    }, 1000);
-                 }
+                }, 1000);
+            }
 
             data.addEntry(new Entry(set.getEntryCount(), (float)Math.random() ), 0);   // set의 맨 마지막에 랜덤값을 Entry로 data에 추가함
             data.notifyDataChanged();                           // data의 값 변동을 감지함
 
             chart.notifyDataSetChanged();                       // chart의 값 변동을 감지함
+
             chart.setVisibleXRangeMaximum(30);                  // chart에서 한 화면에 x좌표를 최대 몇개까지 출력할 것인지 정함
             chart.moveViewToX(data.getEntryCount());
 
@@ -182,10 +190,12 @@ Log.d("넘어온 시간들",hour+"랑"+min);
             thread.interrupt();                                // 널이 아닌(살아있는) 쓰레드에 인터럽트를 검
 
         final Runnable runnable = new Runnable() {
+
             @Override
             public void run() {
-                addEntry();                                    // addEntry 함수를 실행
+                addEntry();
             }
+
         };
 
         thread = new Thread(new Runnable() {
@@ -196,7 +206,8 @@ Log.d("넘어온 시간들",hour+"랑"+min);
                     runOnUiThread(runnable);                   // UI 쓰레드에서 위에 생성한 runnable을 실행
                     try
                     {
-                        Thread.sleep(1000);          // 차트를 그리는데 0.1초의 딜레이를 줌
+                        Thread.sleep(1000);
+                       // 차트를 그리는데 0.1초의 딜레이를 줌
                     }catch (InterruptedException ie)
                     {
                         ie.printStackTrace();              // 표준 오류 스트림으로 돌아가는 이 스크롤 가능 공간을 인쇄한다
@@ -233,10 +244,10 @@ Log.d("넘어온 시간들",hour+"랑"+min);
         };
 
     };
- public void onBackPressed(){  //뒤로가기누르면 꺼지게한거임 이거 지금 단독어플일때 ㅇㅇ
+ public void onBackPressed(){
         thread.interrupt();
-
         super.onBackPressed();
+        mHandler.removeCallbacksAndMessages(0);
     }
 
     public void mOnClick(View v){
