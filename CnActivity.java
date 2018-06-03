@@ -139,7 +139,8 @@ float data_Value;
             }
             data_Value= (float) Math.random();
             dia(data_Value);
-            data.addEntry(new Entry(set.getEntryCount(), cc), 0);   // set의 맨 마지막에 랜덤값을 Entry로 data에 추가함
+            removeDialog(0);
+            data.addEntry(new Entry(set.getEntryCount(), data_Value), 0);   // set의 맨 마지막에 랜덤값을 Entry로 data에 추가함
 
 
             data.addEntry(new Entry(set.getEntryCount(), (float)Math.random() ), 0);   // set의 맨 마지막에 랜덤값을 Entry로 data에 추가함
